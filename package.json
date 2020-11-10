@@ -21,11 +21,12 @@
   "peerDependencies": {
     "react-native": ">=0.13"
   },
-  "dependencies": {},
+  "dependencies": {
+    "react-native": "^0.63.3"
+  },
   "rnpm": {
     "android": {
       "packageInstance": "new AndroidWifiPackage()"
     }
   }
-
 }

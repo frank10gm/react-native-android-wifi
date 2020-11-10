@@ -42,3 +42,6 @@ npm-debug.log
 #Example
 Example/node_modules/
 Example/andoid/build
+
+.idea
+package-lock.json
