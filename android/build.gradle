@@ -1,24 +1,8 @@
 apply plugin: 'com.android.library'
 
-def DEFAULT_COMPILE_SDK_VERSION = 29
-def DEFAULT_BUILD_TOOLS_VERSION = "29.0.2"
-def DEFAULT_TARGET_SDK_VERSION = 29
-
-buildscript {
-    repositories {
-        mavenLocal()
-        google()
-        jcenter()
-        maven {
-            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-            url "$rootDir/../node_modules/react-native/android"
-        }
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3' // 1.3.0-beta2
-    }
-}
+def DEFAULT_COMPILE_SDK_VERSION = 23
+def DEFAULT_BUILD_TOOLS_VERSION = "23.0.1"
+def DEFAULT_TARGET_SDK_VERSION = 22
 
 android {
     compileSdkVersion rootProject.hasProperty('compileSdkVersion') ? rootProject.compileSdkVersion : DEFAULT_COMPILE_SDK_VERSION
@@ -32,16 +16,6 @@ android {
     }
 }
 
-repositories {
-    mavenLocal()
-    google()
-    jcenter()
-    maven {
-        // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-        url "$rootDir/../node_modules/react-native/android"
-    }
-}
-
 dependencies {
-    implementation 'com.facebook.react:react-native:+'
+    compile 'com.facebook.react:react-native:+'
 }
