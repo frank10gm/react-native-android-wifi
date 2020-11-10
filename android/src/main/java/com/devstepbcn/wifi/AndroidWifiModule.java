@@ -195,7 +195,6 @@ public class AndroidWifiModule extends ReactContextBaseJavaModule {
 	//Example:  wifi.findAndConnect(ssid, password);
 	//After 10 seconds, a post telling you whether you are connected will pop up.
 	//Callback returns true if ssid is in the range
-	@RequiresApi(api = Build.VERSION_CODES.Q)
 	@ReactMethod
 	public void findAndConnect(String ssid, String password, Callback ssidFound) {
 		List < ScanResult > results = wifi.getScanResults();
@@ -222,7 +221,6 @@ public class AndroidWifiModule extends ReactContextBaseJavaModule {
 	}
 
 	//Method to connect to WIFI Network
-	@RequiresApi(api = Build.VERSION_CODES.Q)
 	public Boolean connectTo(ScanResult result, String password, String ssid) {
 		//Make new configuration
 		WifiConfiguration conf = new WifiConfiguration();
@@ -278,30 +276,32 @@ public class AndroidWifiModule extends ReactContextBaseJavaModule {
 		}
 
 		// frankie
-		Log.d("FRANKIE", "init here");
-		WifiNetworkSpecifier.Builder builder = new WifiNetworkSpecifier.Builder();
-		builder.setSsid(ssid);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+			Log.d("FRANKIE", "init here");
+			WifiNetworkSpecifier.Builder builder = new WifiNetworkSpecifier.Builder();
+			builder.setSsid(ssid);
 
-		WifiNetworkSpecifier wifiNetworkSpecifier = builder.build();
-		NetworkRequest.Builder networkRequestBuilder = new NetworkRequest.Builder();
-		networkRequestBuilder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
-		networkRequestBuilder.setNetworkSpecifier(wifiNetworkSpecifier);
-		NetworkRequest networkRequest = networkRequestBuilder.build();
-		final ConnectivityManager cm = (ConnectivityManager)
-				reactContext.getApplicationContext()
-						.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (cm != null) {
-			cm.requestNetwork(networkRequest, new ConnectivityManager.NetworkCallback() {
-				@Override
-				public void onAvailable(@NonNull Network network) {
-					super.onAvailable(network);
-					cm.bindProcessToNetwork(network);
-				}
-			});
+			WifiNetworkSpecifier wifiNetworkSpecifier = builder.build();
+			NetworkRequest.Builder networkRequestBuilder = new NetworkRequest.Builder();
+			networkRequestBuilder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
+			networkRequestBuilder.setNetworkSpecifier(wifiNetworkSpecifier);
+			NetworkRequest networkRequest = networkRequestBuilder.build();
+			final ConnectivityManager cm = (ConnectivityManager)
+					reactContext.getApplicationContext()
+							.getSystemService(Context.CONNECTIVITY_SERVICE);
+			if (cm != null) {
+				cm.requestNetwork(networkRequest, new ConnectivityManager.NetworkCallback() {
+					@Override
+					public void onAvailable(@NonNull Network network) {
+						super.onAvailable(network);
+						cm.bindProcessToNetwork(network);
+					}
+				});
 
-			return true;
+				return true;
+			}
 		}
-
+		// frankie - end
 
 
 		List<WifiConfiguration> mWifiConfigList = wifi.getConfiguredNetworks();
