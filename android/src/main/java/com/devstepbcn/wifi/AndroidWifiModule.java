@@ -200,6 +200,7 @@ public class AndroidWifiModule extends ReactContextBaseJavaModule {
 		// 		connected = connectTo(result, password, ssid);
 		// 	}
 		// }
+		boolean connected = false;
 		connected = connectTo(password, ssid);
 		ssidFound.invoke(connected);
 	}
