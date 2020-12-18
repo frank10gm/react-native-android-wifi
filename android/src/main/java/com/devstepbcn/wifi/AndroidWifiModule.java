@@ -46,6 +46,8 @@ public class AndroidWifiModule extends ReactContextBaseJavaModule {
 	//WifiManager Instance
 	WifiManager wifi;
 	ReactApplicationContext reactContext;
+	ConnectivityManager externalCm;
+	ConnectivityManager.NetworkCallback externalNc;
 
 	//Constructor
 	public AndroidWifiModule(ReactApplicationContext reactContext) {
@@ -286,17 +288,21 @@ public class AndroidWifiModule extends ReactContextBaseJavaModule {
 			networkRequestBuilder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
 			networkRequestBuilder.setNetworkSpecifier(wifiNetworkSpecifier);
 			NetworkRequest networkRequest = networkRequestBuilder.build();
-			final ConnectivityManager cm = (ConnectivityManager)
+			externalCm = (ConnectivityManager)
 					reactContext.getApplicationContext()
 							.getSystemService(Context.CONNECTIVITY_SERVICE);
-			if (cm != null) {
-				cm.requestNetwork(networkRequest, new ConnectivityManager.NetworkCallback() {
-					@Override
-					public void onAvailable(@NonNull Network network) {
-						super.onAvailable(network);
-						cm.bindProcessToNetwork(network);
-					}
-				});
+
+			externalNc = new ConnectivityManager.NetworkCallback() {
+				@Override
+				public void onAvailable(@NonNull Network network) {
+					super.onAvailable(network);
+					externalCm.bindProcessToNetwork(network);
+
+				}
+			};
+
+			if (externalCm != null) {
+				externalCm.requestNetwork(networkRequest, externalNc);
 
 				return true;
 			}
@@ -426,7 +432,13 @@ public class AndroidWifiModule extends ReactContextBaseJavaModule {
 	//Disconnect current Wifi.
 	@ReactMethod
 	public void disconnect() {
-		wifi.disconnect();
+
+		// frankie
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+			externalCm.unregisterNetworkCallback(externalNc);
+		}else {
+			wifi.disconnect();
+		}
 	}
 
 	//This method will return current ssid
